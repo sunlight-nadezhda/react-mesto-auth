@@ -10,6 +10,8 @@ import AddPlacePopup from "./AddPlacePopup";
 import ConfirmationPopup from "./ConfirmationPopup";
 import api from "./../utils/api";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import Login from "./Login";
+import ProtectedRoute from "./ProtectedRoute";
 
 function App() {
     const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
@@ -162,7 +164,7 @@ function App() {
                     <Switch>
                         <Route path="/main">
                             {!loggedIn ? (
-                                <Redirect to="/sign-in" />
+                                <Redirect to="/signin" />
                             ) : (
                                 <Main
                                     onEditProfile={handleEditProfileClick}
@@ -175,13 +177,24 @@ function App() {
                                 />
                             )}
                         </Route>
-                        <Route path="/sign-in"></Route>
-                        <Route path="/sign-up"></Route>
-                        <Route exact path="/">
+                        <Route path="/signin">
+                            <Login
+                                title="Вход"
+                                name="login"
+                                buttonText="Войти"
+                            ></Login>
+                        </Route>
+                        <Route path="/signup"></Route>
+                        <ProtectedRoute
+                            path="/main"
+                            loggedIn={loggedIn}
+                            component={Main}
+                        />
+                        <Route>
                             {loggedIn ? (
                                 <Redirect to="/main" />
                             ) : (
-                                <Redirect to="/sign-in" />
+                                <Redirect to="./signin" />
                             )}
                         </Route>
                     </Switch>
