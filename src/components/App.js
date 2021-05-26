@@ -1,14 +1,15 @@
 import React, { useState } from "react";
+import { Route, Switch, Redirect } from "react-router-dom";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
 import ImagePopup from "./ImagePopup";
-import api from "./../utils/api";
-import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
 import ConfirmationPopup from "./ConfirmationPopup";
+import api from "./../utils/api";
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
 function App() {
     const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
@@ -21,6 +22,7 @@ function App() {
     const [isConfirmationPopupOpen, setIsConfirmationPopupOpen] =
         useState(false);
     const [deletedCard, setDeletedCard] = useState({});
+    const [loggedIn, setLoggedIn] = useState(false);
 
     function handleEditAvatarClick() {
         setIsEditAvatarPopupOpen(true);
@@ -157,16 +159,32 @@ function App() {
             <div className="page">
                 <div className="page__content">
                     <Header />
-                    <Main
-                        onEditProfile={handleEditProfileClick}
-                        onAddPlace={handleAddPlaceClick}
-                        onEditAvatar={handleEditAvatarClick}
-                        onShowImage={handleCardClick}
-                        cards={cards}
-                        onCardLike={handleCardLike}
-                        // onCardDelete={handleCardDelete}
-                        onConfirm={handleConfirmationClick}
-                    />
+                    <Switch>
+                        <Route path="/main">
+                            {!loggedIn ? (
+                                <Redirect to="/sign-in" />
+                            ) : (
+                                <Main
+                                    onEditProfile={handleEditProfileClick}
+                                    onAddPlace={handleAddPlaceClick}
+                                    onEditAvatar={handleEditAvatarClick}
+                                    onShowImage={handleCardClick}
+                                    cards={cards}
+                                    onCardLike={handleCardLike}
+                                    onConfirm={handleConfirmationClick}
+                                />
+                            )}
+                        </Route>
+                        <Route path="/sign-in"></Route>
+                        <Route path="/sign-up"></Route>
+                        <Route exact path="/">
+                            {loggedIn ? (
+                                <Redirect to="/main" />
+                            ) : (
+                                <Redirect to="/sign-in" />
+                            )}
+                        </Route>
+                    </Switch>
                     <Footer />
                 </div>
 
