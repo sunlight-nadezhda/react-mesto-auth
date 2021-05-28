@@ -30,6 +30,7 @@ function App() {
     const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
     const [userData, setUserData] = useState(null);
     const [statusData, setStatusData] = useState(null);
+    const [isRegistered, setIsRegistered] = useState(false);
     const [loggedIn, setLoggedIn] = useState(false);
 
     function handleEditAvatarClick() {
@@ -63,6 +64,7 @@ function App() {
         setIsConfirmationPopupOpen(false);
         setSelectedCard({});
         setIsInfoTooltipOpen(false);
+        setStatusData(null);
     }
 
     function handleCardClick(cardData) {
@@ -174,7 +176,7 @@ function App() {
         <CurrentUserContext.Provider value={currentUser}>
             <div className="page">
                 <div className="page__content">
-                    <Header />
+                    <Header linkUrl={isRegistered ? "signin" : "signup"} linkName={isRegistered ? "Войти" : "Регистрация"} />
                     <Switch>
                         <ProtectedRoute
                             exact
