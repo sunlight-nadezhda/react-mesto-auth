@@ -11,6 +11,7 @@ import ConfirmationPopup from "./ConfirmationPopup";
 import api from "./../utils/api";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import Login from "./Login";
+import Register from "./Register";
 import ProtectedRoute from "./ProtectedRoute";
 
 function App() {
@@ -162,39 +163,38 @@ function App() {
                 <div className="page__content">
                     <Header />
                     <Switch>
-                        <Route path="/main">
-                            {!loggedIn ? (
-                                <Redirect to="/signin" />
-                            ) : (
-                                <Main
-                                    onEditProfile={handleEditProfileClick}
-                                    onAddPlace={handleAddPlaceClick}
-                                    onEditAvatar={handleEditAvatarClick}
-                                    onShowImage={handleCardClick}
-                                    cards={cards}
-                                    onCardLike={handleCardLike}
-                                    onConfirm={handleConfirmationClick}
-                                />
-                            )}
-                        </Route>
+                        <ProtectedRoute
+                            exact
+                            path="/"
+                            loggedIn={loggedIn}
+                            component={Main}
+                            onEditProfile={handleEditProfileClick}
+                            onAddPlace={handleAddPlaceClick}
+                            onEditAvatar={handleEditAvatarClick}
+                            onShowImage={handleCardClick}
+                            cards={cards}
+                            onCardLike={handleCardLike}
+                            onConfirm={handleConfirmationClick}
+                        />
                         <Route path="/signin">
                             <Login
                                 title="Вход"
                                 name="login"
                                 buttonText="Войти"
-                            ></Login>
+                            />
                         </Route>
-                        <Route path="/signup"></Route>
-                        <ProtectedRoute
-                            path="/main"
-                            loggedIn={loggedIn}
-                            component={Main}
-                        />
+                        <Route path="/signup">
+                            <Register
+                                title="Регистрация"
+                                name="register"
+                                buttonText="Зарегистрироваться"
+                            />
+                        </Route>
                         <Route>
-                            {loggedIn ? (
-                                <Redirect to="/main" />
+                            {!loggedIn ? (
+                                <Redirect to="signin" />
                             ) : (
-                                <Redirect to="./signin" />
+                                <Redirect to="/" />
                             )}
                         </Route>
                     </Switch>

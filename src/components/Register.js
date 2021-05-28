@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
 
-function Login(props) {
+function Register(props) {
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [isDisabled, setIsDisabled] = React.useState(true);
-    const submitButtonClassName = `popup__save-button popup__save-button_type_${props.name} ${
-        isDisabled ? "popup__save-button_inactive" : ""
+    const submitButtonClassName = `popup__save-button popup__save-button_type_login ${
+        props.isDisabled ? "popup__save-button_inactive" : ""
     }`;
 
     function handleChangeEmail(e) {
@@ -36,8 +37,8 @@ function Login(props) {
     }, [email, password]);
 
     return (
-        <div className={`popup__container popup__container_type_${props.name}`}>
-            <h2 className={`popup__title popup__title_type_${props.name}`}>{props.title}</h2>
+        <div className="popup__container popup__container_type_login">
+            <h2 className="popup__title popup__title_type_login">{props.title}</h2>
             <form
                 className={`popup__form popup__form_type_${props.name}`}
                 name={props.name}
@@ -51,7 +52,7 @@ function Login(props) {
                         onChange={handleChangeEmail}
                         name={`input-name-${props.name}`}
                         placeholder="Email"
-                        className={`popup__input popup__input_type_${props.name} popup__input_type_email-${props.name}`}
+                        className={`popup__input popup__input_type_login popup__input_type_email-${props.name}`}
                         id={`input-email-${props.name}`}
                         required
                     />
@@ -64,7 +65,7 @@ function Login(props) {
                         onChange={handleChangePassword}
                         name={`input-password-${props.name}`}
                         placeholder="Пароль"
-                        className={`popup__input popup__input_type_${props.name} popup__input_type_password-${props.name}`}
+                        className={`popup__input popup__input_type_login popup__input_type_password-${props.name}`}
                         id={`input-password-${props.name}`}
                         required
                     />
@@ -78,8 +79,9 @@ function Login(props) {
                     {props.buttonText}
                 </button>
             </form>
+            <Link to="/signin" className="popup__link">Уже зарегистрированы? Войти</Link>
         </div>
     );
 }
 
-export default Login;
+export default Register;
