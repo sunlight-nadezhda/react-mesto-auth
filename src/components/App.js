@@ -12,7 +12,9 @@ import api from "./../utils/api";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import Login from "./Login";
 import Register from "./Register";
+import InfoTooltip from "./InfoTooltip";
 import ProtectedRoute from "./ProtectedRoute";
+import { registerStatus } from "../utils/constants";
 
 function App() {
     const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
@@ -25,6 +27,9 @@ function App() {
     const [isConfirmationPopupOpen, setIsConfirmationPopupOpen] =
         useState(false);
     const [deletedCard, setDeletedCard] = useState({});
+    const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
+    const [userData, setUserData] = useState(null);
+    const [statusData, setStatusData] = useState(null);
     const [loggedIn, setLoggedIn] = useState(false);
 
     function handleEditAvatarClick() {
@@ -44,12 +49,20 @@ function App() {
         setDeletedCard(cardData);
     }
 
+    function handleInfoTooltipSubmit(userData) {
+        setUserData(userData);
+        // setStatusData(registerStatus.success);
+        setStatusData(registerStatus.fail);
+        setIsInfoTooltipOpen(true);
+    }
+
     function closeAllPopups() {
         setIsEditAvatarPopupOpen(false);
         setIsEditProfilePopupOpen(false);
         setIsAddPlacePopupOpen(false);
         setIsConfirmationPopupOpen(false);
         setSelectedCard({});
+        setIsInfoTooltipOpen(false);
     }
 
     function handleCardClick(cardData) {
@@ -188,6 +201,7 @@ function App() {
                                 title="Регистрация"
                                 name="register"
                                 buttonText="Зарегистрироваться"
+                                onRegisterSubmit={handleInfoTooltipSubmit}
                             />
                         </Route>
                         <Route>
@@ -200,6 +214,12 @@ function App() {
                     </Switch>
                     <Footer />
                 </div>
+
+                <InfoTooltip
+                    isOpen={isInfoTooltipOpen}
+                    onClose={closeAllPopups}
+                    statusData={statusData}
+                />
 
                 <EditProfilePopup
                     isOpen={isEditProfilePopupOpen}

@@ -36,12 +36,14 @@
 @import url('./blocks/popup/_type/popup_type_show-image.css');
 @import url('./blocks/popup/__title/popup__title.css');
 @import url('./blocks/popup/__title/_type/popup__title_type_login.css');
+@import url('./blocks/popup/__title/_type/popup__title_type_status.css');
 @import url('./blocks/popup/__close-button/popup__close-button.css');
 @import url('./blocks/popup/__container/popup__container.css');
 @import url('./blocks/popup/__container/_type/popup__container_type_show-image.css');
 @import url('./blocks/popup/__container/_type/popup__container_type_confirm.css');
 @import url('./blocks/popup/__container/_type/popup__container_type_edit-avatar.css');
 @import url('./blocks/popup/__container/_type/popup__container_type_login.css');
+@import url("./blocks/popup/__container/_type/popup__container_type_info-tooltip.css");
 @import url('./blocks/popup/__form/popup__form.css');
 @import url('./blocks/popup/__form/_type/popup__form_type_confirm.css');
 @import url('./blocks/popup/__form/_type/popup__form_type_edit-avatar.css');

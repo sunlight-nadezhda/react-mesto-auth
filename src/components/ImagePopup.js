@@ -1,11 +1,9 @@
-import React from "react";
-
 function ImagePopup(props) {
     function onCloseByOverlay(event) {
         if (event.target === event.currentTarget) {
             props.onClose();
         }
-    };
+    }
 
     return (
         <div
