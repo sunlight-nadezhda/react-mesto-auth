@@ -15,6 +15,7 @@ import Register from "./Register";
 import InfoTooltip from "./InfoTooltip";
 import ProtectedRoute from "./ProtectedRoute";
 import { registerStatus } from "../utils/constants";
+import auth from "./../utils/auth";
 
 function App() {
     const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
@@ -52,9 +53,20 @@ function App() {
 
     function handleInfoTooltipSubmit(userData) {
         setUserData(userData);
+        console.log(userData);
+        auth.register(userData)
+            .then(data => {
+                console.log(data);
+                if (data) {
+                    setStatusData(registerStatus.success);
+                } else {
+                    setStatusData(registerStatus.fail);
+                }
+                setIsInfoTooltipOpen(true);
+            });
         // setStatusData(registerStatus.success);
-        setStatusData(registerStatus.fail);
-        setIsInfoTooltipOpen(true);
+        // setStatusData(registerStatus.fail);
+        // setIsInfoTooltipOpen(true);
     }
 
     function closeAllPopups() {
