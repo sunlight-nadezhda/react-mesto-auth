@@ -4,7 +4,14 @@ function UserStatus(props) {
     return (
         <div className="header__user-status">
             <span className="header__user-email"></span>
-            <Link to={`/${props.linkUrl}`} target="_self" className="header__link">{props.linkName}</Link>
+            <Link
+                to={`/${props.linkUrl}`}
+                target="_self"
+                className="header__link"
+                onClick={props.onRegister}
+            >
+                {props.linkName}
+            </Link>
         </div>
     );
 }

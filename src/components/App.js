@@ -55,18 +55,22 @@ function App() {
         setUserData(userData);
         console.log(userData);
         auth.register(userData)
-            .then(data => {
-                console.log(data);
-                if (data) {
+            .then((response) => {
+                if (response.ok) {
                     setStatusData(registerStatus.success);
+                    setIsInfoTooltipOpen(true);
+                    return response.json();
                 } else {
                     setStatusData(registerStatus.fail);
+                    setIsInfoTooltipOpen(true);
+                    return Promise.reject(`Ошибка: ${response.status}`);
                 }
-                setIsInfoTooltipOpen(true);
-            });
-        // setStatusData(registerStatus.success);
-        // setStatusData(registerStatus.fail);
-        // setIsInfoTooltipOpen(true);
+            })
+            .catch((err) => console.log(err));
+    }
+
+    function changeRegistered() {
+        setIsRegistered(!isRegistered);
     }
 
     function closeAllPopups() {
@@ -188,7 +192,11 @@ function App() {
         <CurrentUserContext.Provider value={currentUser}>
             <div className="page">
                 <div className="page__content">
-                    <Header linkUrl={isRegistered ? "signin" : "signup"} linkName={isRegistered ? "Войти" : "Регистрация"} />
+                    <Header
+                        linkUrl={isRegistered ? "signin" : "signup"}
+                        linkName={isRegistered ? "Войти" : "Регистрация"}
+                        onRegister={changeRegistered}
+                    />
                     <Switch>
                         <ProtectedRoute
                             exact
@@ -215,6 +223,7 @@ function App() {
                                 title="Регистрация"
                                 name="register"
                                 buttonText="Зарегистрироваться"
+                                onRegister={changeRegistered}
                                 onRegisterSubmit={handleInfoTooltipSubmit}
                             />
                         </Route>

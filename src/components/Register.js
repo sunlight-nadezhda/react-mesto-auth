@@ -86,7 +86,11 @@ function Register(props) {
                     {props.buttonText}
                 </button>
             </form>
-            <Link to="/signin" className="popup__link">
+            <Link
+                to="/signin"
+                className="popup__link"
+                onClick={props.onRegister}
+            >
                 Уже зарегистрированы? Войти
             </Link>
         </div>

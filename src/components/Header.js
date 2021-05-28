@@ -12,7 +12,7 @@ function Header(props) {
                     className="header__logo"
                 />
             </a>
-            <UserStatus linkUrl={props.linkUrl} linkName={props.linkName} />
+            <UserStatus linkUrl={props.linkUrl} linkName={props.linkName} onRegister={props.onRegister} />
         </header>
     );
 }
