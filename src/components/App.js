@@ -32,7 +32,6 @@ function App() {
     const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
     // const [userData, setUserData] = useState(null);
     const [statusData, setStatusData] = useState(null);
-    // const [isRegistered, setIsRegistered] = useState(false);
     const [loggedIn, setLoggedIn] = useState(false);
 
     function handleEditAvatarClick() {
@@ -54,7 +53,7 @@ function App() {
 
     function handleInfoTooltipSubmit(userData) {
         // setUserData(userData);
-        console.log(userData);
+        // console.log(userData);
         auth.register(userData)
             .then((response) => {
                 if (response.ok) {
@@ -70,9 +69,18 @@ function App() {
             .catch((err) => console.log(err));
     }
 
-    // function changeRegistered() {
-    //     setIsRegistered(!isRegistered);
-    // }
+    function handleLoginSubmit(userData) {
+        // setUserData(userData);
+        // console.log(userData);
+        auth.authorize(userData)
+            .then((response) =>
+                response.ok
+                    ? response.json()
+                    : Promise.reject(`Ошибка: ${response.status}`)
+            )
+            .then((data) => localStorage.setItem('token', data.token))
+            .catch((err) => console.log(err));
+    }
 
     function closeAllPopups() {
         setIsEditAvatarPopupOpen(false);
@@ -217,6 +225,7 @@ function App() {
                                 title="Вход"
                                 name="login"
                                 buttonText="Войти"
+                                onLoginSubmit={handleLoginSubmit}
                             />
                         </PageContent>
                     </Route>
