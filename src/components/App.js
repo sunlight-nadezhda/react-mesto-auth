@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Route, Switch, Redirect } from "react-router-dom";
+import { Route, Switch, Redirect, useHistory } from "react-router-dom";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
@@ -32,6 +32,7 @@ function App() {
     const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
     // const [userData, setUserData] = useState(null);
     const [statusData, setStatusData] = useState(null);
+    const history = useHistory();
     const [loggedIn, setLoggedIn] = useState(false);
 
     function handleEditAvatarClick() {
@@ -52,13 +53,12 @@ function App() {
     }
 
     function handleInfoTooltipSubmit(userData) {
-        // setUserData(userData);
-        // console.log(userData);
         auth.register(userData)
             .then((response) => {
                 if (response.ok) {
                     setStatusData(registerStatus.success);
                     setIsInfoTooltipOpen(true);
+                    history.push("/signin");
                     return response.json();
                 } else {
                     setStatusData(registerStatus.fail);
@@ -70,15 +70,19 @@ function App() {
     }
 
     function handleLoginSubmit(userData) {
-        // setUserData(userData);
-        // console.log(userData);
         auth.authorize(userData)
             .then((response) =>
                 response.ok
                     ? response.json()
                     : Promise.reject(`Ошибка: ${response.status}`)
             )
-            .then((data) => localStorage.setItem('token', data.token))
+            .then((data) => {
+                if (data.token) {
+                    localStorage.setItem("token", data.token);
+                    setLoggedIn(true);
+                    history.push("/");
+                }
+            })
             .catch((err) => console.log(err));
     }
 
