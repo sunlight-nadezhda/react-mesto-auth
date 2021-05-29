@@ -14,6 +14,7 @@ import Login from "./Login";
 import Register from "./Register";
 import InfoTooltip from "./InfoTooltip";
 import ProtectedRoute from "./ProtectedRoute";
+import PageContent from "./PageContent";
 import { registerStatus } from "../utils/constants";
 import auth from "./../utils/auth";
 
@@ -29,9 +30,9 @@ function App() {
         useState(false);
     const [deletedCard, setDeletedCard] = useState({});
     const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
-    const [userData, setUserData] = useState(null);
+    // const [userData, setUserData] = useState(null);
     const [statusData, setStatusData] = useState(null);
-    const [isRegistered, setIsRegistered] = useState(false);
+    // const [isRegistered, setIsRegistered] = useState(false);
     const [loggedIn, setLoggedIn] = useState(false);
 
     function handleEditAvatarClick() {
@@ -52,7 +53,7 @@ function App() {
     }
 
     function handleInfoTooltipSubmit(userData) {
-        setUserData(userData);
+        // setUserData(userData);
         console.log(userData);
         auth.register(userData)
             .then((response) => {
@@ -69,9 +70,9 @@ function App() {
             .catch((err) => console.log(err));
     }
 
-    function changeRegistered() {
-        setIsRegistered(!isRegistered);
-    }
+    // function changeRegistered() {
+    //     setIsRegistered(!isRegistered);
+    // }
 
     function closeAllPopups() {
         setIsEditAvatarPopupOpen(false);
@@ -191,52 +192,53 @@ function App() {
     return (
         <CurrentUserContext.Provider value={currentUser}>
             <div className="page">
-                <div className="page__content">
-                    <Header
-                        linkUrl={isRegistered ? "signin" : "signup"}
-                        linkName={isRegistered ? "Войти" : "Регистрация"}
-                        onRegister={changeRegistered}
+                <Switch>
+                    <ProtectedRoute
+                        exact
+                        path="/"
+                        loggedIn={loggedIn}
+                        // loggedIn={true}
+                        component={PageContent}
+                        onEditProfile={handleEditProfileClick}
+                        onAddPlace={handleAddPlaceClick}
+                        onEditAvatar={handleEditAvatarClick}
+                        onShowImage={handleCardClick}
+                        cards={cards}
+                        onCardLike={handleCardLike}
+                        onConfirm={handleConfirmationClick}
+                        headerComponent={Header}
+                        mainComponent={Main}
+                        footerComponent={Footer}
                     />
-                    <Switch>
-                        <ProtectedRoute
-                            exact
-                            path="/"
-                            loggedIn={loggedIn}
-                            component={Main}
-                            onEditProfile={handleEditProfileClick}
-                            onAddPlace={handleAddPlaceClick}
-                            onEditAvatar={handleEditAvatarClick}
-                            onShowImage={handleCardClick}
-                            cards={cards}
-                            onCardLike={handleCardLike}
-                            onConfirm={handleConfirmationClick}
-                        />
-                        <Route path="/signin">
+                    <Route path="/signin">
+                        <PageContent>
+                            <Header linkUrl="signup" linkName="Регистрация" />
                             <Login
                                 title="Вход"
                                 name="login"
                                 buttonText="Войти"
                             />
-                        </Route>
-                        <Route path="/signup">
+                        </PageContent>
+                    </Route>
+                    <Route path="/signup">
+                        <PageContent>
+                            <Header linkUrl="signin" linkName="Войти" />
                             <Register
                                 title="Регистрация"
                                 name="register"
                                 buttonText="Зарегистрироваться"
-                                onRegister={changeRegistered}
                                 onRegisterSubmit={handleInfoTooltipSubmit}
                             />
-                        </Route>
-                        <Route>
-                            {!loggedIn ? (
-                                <Redirect to="signin" />
-                            ) : (
-                                <Redirect to="/" />
-                            )}
-                        </Route>
-                    </Switch>
-                    <Footer />
-                </div>
+                        </PageContent>
+                    </Route>
+                    <Route>
+                        {!loggedIn ? (
+                            <Redirect to="signin" />
+                        ) : (
+                            <Redirect to="/" />
+                        )}
+                    </Route>
+                </Switch>
 
                 <InfoTooltip
                     isOpen={isInfoTooltipOpen}

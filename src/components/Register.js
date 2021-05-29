@@ -6,7 +6,7 @@ function Register(props) {
     const [password, setPassword] = React.useState("");
     const [isDisabled, setIsDisabled] = React.useState(true);
     const submitButtonClassName = `popup__save-button popup__save-button_type_login ${
-        props.isDisabled ? "popup__save-button_inactive" : ""
+        isDisabled ? "popup__save-button_inactive" : ""
     }`;
 
     function handleChangeEmail(e) {
