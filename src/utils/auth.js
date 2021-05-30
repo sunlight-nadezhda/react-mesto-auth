@@ -22,6 +22,16 @@ class Auth {
       body: JSON.stringify({email, password})
     });
   }
+
+  getContent(token) {
+    return fetch(`${this._url}/users/me`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      }
+    });
+  }
 }
 
 const auth = new Auth("https://auth.nomoreparties.co");

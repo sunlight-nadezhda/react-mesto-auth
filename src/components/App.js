@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Route, Switch, Redirect, useHistory } from "react-router-dom";
 import Header from "./Header";
 import Main from "./Main";
@@ -30,7 +30,7 @@ function App() {
         useState(false);
     const [deletedCard, setDeletedCard] = useState({});
     const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
-    // const [userData, setUserData] = useState(null);
+    const [userData, setUserData] = useState(null);
     const [statusData, setStatusData] = useState(null);
     const history = useHistory();
     const [loggedIn, setLoggedIn] = useState(false);
@@ -50,40 +50,6 @@ function App() {
     function handleConfirmationClick(cardData) {
         setIsConfirmationPopupOpen(true);
         setDeletedCard(cardData);
-    }
-
-    function handleInfoTooltipSubmit(userData) {
-        auth.register(userData)
-            .then((response) => {
-                if (response.ok) {
-                    setStatusData(registerStatus.success);
-                    setIsInfoTooltipOpen(true);
-                    history.push("/signin");
-                    return response.json();
-                } else {
-                    setStatusData(registerStatus.fail);
-                    setIsInfoTooltipOpen(true);
-                    return Promise.reject(`Ошибка: ${response.status}`);
-                }
-            })
-            .catch((err) => console.log(err));
-    }
-
-    function handleLoginSubmit(userData) {
-        auth.authorize(userData)
-            .then((response) =>
-                response.ok
-                    ? response.json()
-                    : Promise.reject(`Ошибка: ${response.status}`)
-            )
-            .then((data) => {
-                if (data.token) {
-                    localStorage.setItem("token", data.token);
-                    setLoggedIn(true);
-                    history.push("/");
-                }
-            })
-            .catch((err) => console.log(err));
     }
 
     function closeAllPopups() {
@@ -168,7 +134,70 @@ function App() {
             });
     }
 
-    React.useEffect(() => {
+    function handleInfoTooltipSubmit(userData) {
+        auth.register(userData)
+            .then((response) => {
+                if (response.ok) {
+                    setStatusData(registerStatus.success);
+                    setIsInfoTooltipOpen(true);
+                    history.push("/signin");
+                    return response.json();
+                } else {
+                    setStatusData(registerStatus.fail);
+                    setIsInfoTooltipOpen(true);
+                    return Promise.reject(`Ошибка: ${response.status}`);
+                }
+            })
+            .catch((err) => console.log(err));
+    }
+
+    function handleLoginSubmit(userData) {
+        auth.authorize(userData)
+            .then((response) =>
+                response.ok
+                    ? response.json()
+                    : Promise.reject(`Ошибка: ${response.status}`)
+            )
+            .then((data) => {
+                if (data.token) {
+                    localStorage.setItem("token", data.token);
+                    setUserData(userData);
+                    setLoggedIn(true);
+                    history.push("/");
+                }
+            })
+            .catch((err) => console.log(err));
+    }
+
+    function checkToken() {
+        const token = localStorage.getItem("token");
+        if (token) {
+            auth.getContent(token)
+                .then((response) =>
+                    response.ok
+                        ? response.json()
+                        : Promise.reject(`Ошибка: ${response.status}`)
+                )
+                .then((userData) => {
+                    if (userData.data) {
+                        setUserData(userData.data);
+                        setLoggedIn(true);
+                        history.push("/");
+                    }
+                })
+                .catch((err) => console.log(err));
+        }
+    }
+
+    function signOut() {
+        if (loggedIn) {
+            localStorage.removeItem("token");
+            setLoggedIn(false);
+            setUserData(null);
+        }
+    }
+
+    useEffect(() => {
         api.getUserInfo()
             .then((userInfo) => {
                 setCurrentUser(userInfo);
@@ -178,7 +207,7 @@ function App() {
             });
     }, []);
 
-    React.useEffect(() => {
+    useEffect(() => {
         api.getInitialCards()
             .then((initialCards) => {
                 setCards(initialCards);
@@ -188,7 +217,7 @@ function App() {
             });
     }, []);
 
-    React.useEffect(() => {
+    useEffect(() => {
         function onCloseByEsc(event) {
             if (event.key === "Escape") {
                 closeAllPopups();
@@ -201,6 +230,10 @@ function App() {
         };
     }, []);
 
+    useEffect(() => {
+        checkToken();
+    }, []);
+
     return (
         <CurrentUserContext.Provider value={currentUser}>
             <div className="page">
@@ -209,7 +242,6 @@ function App() {
                         exact
                         path="/"
                         loggedIn={loggedIn}
-                        // loggedIn={true}
                         component={PageContent}
                         onEditProfile={handleEditProfileClick}
                         onAddPlace={handleAddPlaceClick}
@@ -221,6 +253,11 @@ function App() {
                         headerComponent={Header}
                         mainComponent={Main}
                         footerComponent={Footer}
+                        userData={userData}
+                        linkUrl="signin"
+                        linkName="Выйти"
+                        classLink="header__link_type_logout"
+                        onSignOut={signOut}
                     />
                     <Route path="/signin">
                         <PageContent>

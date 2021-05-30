@@ -3,12 +3,12 @@ import { Link } from "react-router-dom";
 function UserStatus(props) {
     return (
         <div className="header__user-status">
-            <span className="header__user-email"></span>
+            <span className="header__user-email">{props.userData ? props.userData.email : ""}</span>
             <Link
                 to={`/${props.linkUrl}`}
                 target="_self"
-                className="header__link"
-                onClick={props.onRegister}
+                className={`header__link ${props.classLink ? props.classLink : ''}`}
+                onClick={props.onSignOut}
             >
                 {props.linkName}
             </Link>

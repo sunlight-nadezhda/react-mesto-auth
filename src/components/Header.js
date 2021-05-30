@@ -1,5 +1,5 @@
 import React from "react";
-import logo from './../images/logo-white.svg';
+import logo from "./../images/logo-white.svg";
 import UserStatus from "./UserStatus";
 
 function Header(props) {
@@ -12,7 +12,13 @@ function Header(props) {
                     className="header__logo"
                 />
             </a>
-            <UserStatus linkUrl={props.linkUrl} linkName={props.linkName} onRegister={props.onRegister} />
+            <UserStatus
+                userData={props.userData}
+                linkUrl={props.linkUrl}
+                linkName={props.linkName}
+                classLink={props.classLink}
+                onSignOut={props.onSignOut}
+            />
         </header>
     );
 }

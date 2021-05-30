@@ -6,6 +6,11 @@ function ProtectedRoute({
     headerComponent: HeaderComponent,
     mainComponent: MainComponent,
     footerComponent: FooterComponent,
+    userData,
+    linkUrl,
+    linkName,
+    classLink,
+    onSignOut,
     ...props
 }) {
     return (
@@ -14,7 +19,13 @@ function ProtectedRoute({
                 if (props.loggedIn) {
                     return (
                         <Component>
-                            <HeaderComponent />
+                            <HeaderComponent
+                                userData={userData}
+                                linkUrl={linkUrl}
+                                linkName={linkName}
+                                classLink={classLink}
+                                onSignOut={onSignOut}
+                            />
                             <MainComponent {...props} />
                             <FooterComponent />
                         </Component>
