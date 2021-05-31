@@ -1,11 +1,27 @@
 .header {
   min-height: 74px;
   border-bottom: 1px solid rgba(84, 84, 84, .7);
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
 }
 
-@media (max-width: 760px) {
+@media screen and (max-width: 760px) {
   .header {
     padding-left: 27px;
     min-height: 56px;
+  }
+}
+
+@media screen and (max-width: 425px) {
+  .header {
+      padding: 30px;
+      box-sizing: border-box;
+  }
+
+  .header_opened {
+    display: flex;
+    flex-direction: column-reverse;
+    position: relative;
   }
 }

@@ -1,14 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Route, Switch, Redirect, useHistory } from "react-router-dom";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
 import ImagePopup from "./ImagePopup";
-import api from "./../utils/api";
-import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
 import ConfirmationPopup from "./ConfirmationPopup";
+import api from "./../utils/api";
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import Login from "./Login";
+import Register from "./Register";
+import InfoTooltip from "./InfoTooltip";
+import ProtectedRoute from "./ProtectedRoute";
+import PageContent from "./PageContent";
+import { registerStatus } from "../utils/constants";
+import auth from "./../utils/auth";
 
 function App() {
     const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
@@ -21,6 +29,12 @@ function App() {
     const [isConfirmationPopupOpen, setIsConfirmationPopupOpen] =
         useState(false);
     const [deletedCard, setDeletedCard] = useState({});
+    const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
+    const [userData, setUserData] = useState(null);
+    const [statusData, setStatusData] = useState(null);
+    const history = useHistory();
+    const [loggedIn, setLoggedIn] = useState(false);
+    // const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     function handleEditAvatarClick() {
         setIsEditAvatarPopupOpen(true);
@@ -45,6 +59,9 @@ function App() {
         setIsAddPlacePopupOpen(false);
         setIsConfirmationPopupOpen(false);
         setSelectedCard({});
+        setIsInfoTooltipOpen(false);
+        setStatusData(null);
+        // setIsMenuOpen(false);
     }
 
     function handleCardClick(cardData) {
@@ -119,7 +136,75 @@ function App() {
             });
     }
 
-    React.useEffect(() => {
+    function onRegister(userData) {
+        auth.register(userData)
+            .then((response) => {
+                if (response.ok) {
+                    setStatusData(registerStatus.success);
+                    setIsInfoTooltipOpen(true);
+                    history.push("/signin");
+                    return response.json();
+                } else {
+                    setStatusData(registerStatus.fail);
+                    setIsInfoTooltipOpen(true);
+                    return Promise.reject(`Ошибка: ${response.status}`);
+                }
+            })
+            .catch((err) => console.log(err));
+    }
+
+    function onLogin(userData) {
+        auth.authorize(userData)
+            .then((response) =>
+                response.ok
+                    ? response.json()
+                    : Promise.reject(`Ошибка: ${response.status}`)
+            )
+            .then((data) => {
+                if (data.token) {
+                    localStorage.setItem("token", data.token);
+                    setUserData(userData);
+                    setLoggedIn(true);
+                    history.push("/");
+                }
+            })
+            .catch((err) => console.log(err));
+    }
+
+    function checkToken() {
+        const token = localStorage.getItem("token");
+        if (token) {
+            auth.getContent(token)
+                .then((response) =>
+                    response.ok
+                        ? response.json()
+                        : Promise.reject(`Ошибка: ${response.status}`)
+                )
+                .then((userData) => {
+                    if (userData.data) {
+                        setUserData(userData.data);
+                        setLoggedIn(true);
+                        history.push("/");
+                    }
+                })
+                .catch((err) => console.log(err));
+        }
+    }
+
+    function onSignOut() {
+        if (loggedIn) {
+            localStorage.removeItem("token");
+            setLoggedIn(false);
+            setUserData(null);
+        }
+    }
+
+    // function handleMenuClick() {
+    //     setIsMenuOpen(true);
+    //     console.log(isMenuOpen);
+    // }
+
+    useEffect(() => {
         api.getUserInfo()
             .then((userInfo) => {
                 setCurrentUser(userInfo);
@@ -129,7 +214,7 @@ function App() {
             });
     }, []);
 
-    React.useEffect(() => {
+    useEffect(() => {
         api.getInitialCards()
             .then((initialCards) => {
                 setCards(initialCards);
@@ -139,7 +224,7 @@ function App() {
             });
     }, []);
 
-    React.useEffect(() => {
+    useEffect(() => {
         function onCloseByEsc(event) {
             if (event.key === "Escape") {
                 closeAllPopups();
@@ -152,23 +237,66 @@ function App() {
         };
     }, []);
 
+    useEffect(() => {
+        checkToken();
+    }, []);
+
     return (
         <CurrentUserContext.Provider value={currentUser}>
             <div className="page">
-                <div className="page__content">
-                    <Header />
-                    <Main
+                <Switch>
+                    <Route path="/signin">
+                        <PageContent>
+                            <Header linkUrl="signup" linkName="Регистрация" />
+                            <Login
+                                title="Вход"
+                                name="login"
+                                buttonText="Войти"
+                                onLogin={onLogin}
+                            />
+                        </PageContent>
+                    </Route>
+                    <Route path="/signup">
+                        <PageContent>
+                            <Header linkUrl="signin" linkName="Войти" />
+                            <Register
+                                title="Регистрация"
+                                name="register"
+                                buttonText="Зарегистрироваться"
+                                onRegister={onRegister}
+                            />
+                        </PageContent>
+                    </Route>
+                    <ProtectedRoute
+                        path="/"
+                        loggedIn={loggedIn}
+                        component={PageContent}
                         onEditProfile={handleEditProfileClick}
                         onAddPlace={handleAddPlaceClick}
                         onEditAvatar={handleEditAvatarClick}
                         onShowImage={handleCardClick}
                         cards={cards}
                         onCardLike={handleCardLike}
-                        // onCardDelete={handleCardDelete}
                         onConfirm={handleConfirmationClick}
+                        headerComponent={Header}
+                        mainComponent={Main}
+                        footerComponent={Footer}
+                        userData={userData}
+                        linkUrl="signin"
+                        linkName="Выйти"
+                        classLink="header__link_type_logout"
+                        onSignOut={onSignOut}
+                        // onShowMenu={handleMenuClick}
+                        // isMenuOpen={isMenuOpen}
+                        // onClose={closeAllPopups}
                     />
-                    <Footer />
-                </div>
+                </Switch>
+
+                <InfoTooltip
+                    isOpen={isInfoTooltipOpen}
+                    onClose={closeAllPopups}
+                    statusData={statusData}
+                />
 
                 <EditProfilePopup
                     isOpen={isEditProfilePopupOpen}
