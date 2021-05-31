@@ -34,6 +34,7 @@ function App() {
     const [statusData, setStatusData] = useState(null);
     const history = useHistory();
     const [loggedIn, setLoggedIn] = useState(false);
+    // const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     function handleEditAvatarClick() {
         setIsEditAvatarPopupOpen(true);
@@ -60,6 +61,7 @@ function App() {
         setSelectedCard({});
         setIsInfoTooltipOpen(false);
         setStatusData(null);
+        // setIsMenuOpen(false);
     }
 
     function handleCardClick(cardData) {
@@ -134,7 +136,7 @@ function App() {
             });
     }
 
-    function handleInfoTooltipSubmit(userData) {
+    function onRegister(userData) {
         auth.register(userData)
             .then((response) => {
                 if (response.ok) {
@@ -151,7 +153,7 @@ function App() {
             .catch((err) => console.log(err));
     }
 
-    function handleLoginSubmit(userData) {
+    function onLogin(userData) {
         auth.authorize(userData)
             .then((response) =>
                 response.ok
@@ -189,13 +191,18 @@ function App() {
         }
     }
 
-    function signOut() {
+    function onSignOut() {
         if (loggedIn) {
             localStorage.removeItem("token");
             setLoggedIn(false);
             setUserData(null);
         }
     }
+
+    // function handleMenuClick() {
+    //     setIsMenuOpen(true);
+    //     console.log(isMenuOpen);
+    // }
 
     useEffect(() => {
         api.getUserInfo()
@@ -238,8 +245,29 @@ function App() {
         <CurrentUserContext.Provider value={currentUser}>
             <div className="page">
                 <Switch>
+                    <Route path="/signin">
+                        <PageContent>
+                            <Header linkUrl="signup" linkName="Регистрация" />
+                            <Login
+                                title="Вход"
+                                name="login"
+                                buttonText="Войти"
+                                onLogin={onLogin}
+                            />
+                        </PageContent>
+                    </Route>
+                    <Route path="/signup">
+                        <PageContent>
+                            <Header linkUrl="signin" linkName="Войти" />
+                            <Register
+                                title="Регистрация"
+                                name="register"
+                                buttonText="Зарегистрироваться"
+                                onRegister={onRegister}
+                            />
+                        </PageContent>
+                    </Route>
                     <ProtectedRoute
-                        exact
                         path="/"
                         loggedIn={loggedIn}
                         component={PageContent}
@@ -257,37 +285,11 @@ function App() {
                         linkUrl="signin"
                         linkName="Выйти"
                         classLink="header__link_type_logout"
-                        onSignOut={signOut}
+                        onSignOut={onSignOut}
+                        // onShowMenu={handleMenuClick}
+                        // isMenuOpen={isMenuOpen}
+                        // onClose={closeAllPopups}
                     />
-                    <Route path="/signin">
-                        <PageContent>
-                            <Header linkUrl="signup" linkName="Регистрация" />
-                            <Login
-                                title="Вход"
-                                name="login"
-                                buttonText="Войти"
-                                onLoginSubmit={handleLoginSubmit}
-                            />
-                        </PageContent>
-                    </Route>
-                    <Route path="/signup">
-                        <PageContent>
-                            <Header linkUrl="signin" linkName="Войти" />
-                            <Register
-                                title="Регистрация"
-                                name="register"
-                                buttonText="Зарегистрироваться"
-                                onRegisterSubmit={handleInfoTooltipSubmit}
-                            />
-                        </PageContent>
-                    </Route>
-                    <Route>
-                        {!loggedIn ? (
-                            <Redirect to="signin" />
-                        ) : (
-                            <Redirect to="/" />
-                        )}
-                    </Route>
                 </Switch>
 
                 <InfoTooltip

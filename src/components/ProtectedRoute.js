@@ -11,6 +11,9 @@ function ProtectedRoute({
     linkName,
     classLink,
     onSignOut,
+    // onShowMenu,
+    // isMenuOpen,
+    // onClose,
     ...props
 }) {
     return (
@@ -25,6 +28,9 @@ function ProtectedRoute({
                                 linkName={linkName}
                                 classLink={classLink}
                                 onSignOut={onSignOut}
+                                // onShowMenu={onShowMenu}
+                                // isMenuOpen={isMenuOpen}
+                                // onClose={onClose}
                             />
                             <MainComponent {...props} />
                             <FooterComponent />

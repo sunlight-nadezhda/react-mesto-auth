@@ -1,0 +1,10 @@
+@media screen and (max-width: 425px) {
+  .header__user-status {
+    display: none;
+  }
+
+  .header__user-status_opened {
+    display: flex;
+    flex-direction: column;
+  }
+}

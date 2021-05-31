@@ -18,4 +18,10 @@
       padding: 30px;
       box-sizing: border-box;
   }
+
+  .header_opened {
+    display: flex;
+    flex-direction: column-reverse;
+    position: relative;
+  }
 }

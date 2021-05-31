@@ -19,7 +19,7 @@ function Register(props) {
 
     function handleSubmit(e) {
         e.preventDefault();
-        props.onRegisterSubmit({ email, password });
+        props.onRegister({ email, password });
         setEmail("");
         setPassword("");
     }
