@@ -290,6 +290,13 @@ function App() {
                         // isMenuOpen={isMenuOpen}
                         // onClose={closeAllPopups}
                     />
+                    <Route>
+                        {!loggedIn ? (
+                            <Redirect to="/signin" />
+                        ) : (
+                            <Redirect to="/" />
+                        )}
+                    </Route>
                 </Switch>
 
                 <InfoTooltip
