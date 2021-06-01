@@ -10,7 +10,8 @@ class Auth {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({email, password})
-    });
+    })
+    .then(this._getResponseData);
   }
 
   authorize({email, password}) {
@@ -20,7 +21,8 @@ class Auth {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({email, password})
-    });
+    })
+    .then(this._getResponseData);
   }
 
   getContent(token) {
@@ -30,7 +32,15 @@ class Auth {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       }
-    });
+    })
+    .then(this._getResponseData);
+  }
+
+  _getResponseData(response) {
+    if (response.ok) {
+      return response.json();
+    }
+    return Promise.reject(new Error(`Ошибка ${response.status}`));
   }
 }
 

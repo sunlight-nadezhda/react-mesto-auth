@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Route, Switch, Redirect, useHistory } from "react-router-dom";
-import Header from "./Header";
 import Main from "./Main";
-import Footer from "./Footer";
 import ImagePopup from "./ImagePopup";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
@@ -14,7 +12,6 @@ import Login from "./Login";
 import Register from "./Register";
 import InfoTooltip from "./InfoTooltip";
 import ProtectedRoute from "./ProtectedRoute";
-import PageContent from "./PageContent";
 import { registerStatus } from "../utils/constants";
 import auth from "./../utils/auth";
 
@@ -139,27 +136,21 @@ function App() {
     function onRegister(userData) {
         auth.register(userData)
             .then((response) => {
-                if (response.ok) {
+                if (response) {
                     setStatusData(registerStatus.success);
                     setIsInfoTooltipOpen(true);
                     history.push("/signin");
-                    return response.json();
-                } else {
-                    setStatusData(registerStatus.fail);
-                    setIsInfoTooltipOpen(true);
-                    return Promise.reject(`Ошибка: ${response.status}`);
                 }
             })
-            .catch((err) => console.log(err));
+            .catch((err) => {
+                setStatusData(registerStatus.fail);
+                setIsInfoTooltipOpen(true);
+                console.log(err);
+            });
     }
 
     function onLogin(userData) {
         auth.authorize(userData)
-            .then((response) =>
-                response.ok
-                    ? response.json()
-                    : Promise.reject(`Ошибка: ${response.status}`)
-            )
             .then((data) => {
                 if (data.token) {
                     localStorage.setItem("token", data.token);
@@ -175,11 +166,6 @@ function App() {
         const token = localStorage.getItem("token");
         if (token) {
             auth.getContent(token)
-                .then((response) =>
-                    response.ok
-                        ? response.json()
-                        : Promise.reject(`Ошибка: ${response.status}`)
-                )
                 .then((userData) => {
                     if (userData.data) {
                         setUserData(userData.data);
@@ -246,31 +232,25 @@ function App() {
             <div className="page">
                 <Switch>
                     <Route path="/signin">
-                        <PageContent>
-                            <Header linkUrl="signup" linkName="Регистрация" />
-                            <Login
-                                title="Вход"
-                                name="login"
-                                buttonText="Войти"
-                                onLogin={onLogin}
-                            />
-                        </PageContent>
+                        <Login
+                            title="Вход"
+                            name="login"
+                            buttonText="Войти"
+                            onLogin={onLogin}
+                        />
                     </Route>
                     <Route path="/signup">
-                        <PageContent>
-                            <Header linkUrl="signin" linkName="Войти" />
-                            <Register
-                                title="Регистрация"
-                                name="register"
-                                buttonText="Зарегистрироваться"
-                                onRegister={onRegister}
-                            />
-                        </PageContent>
+                        <Register
+                            title="Регистрация"
+                            name="register"
+                            buttonText="Зарегистрироваться"
+                            onRegister={onRegister}
+                        />
                     </Route>
                     <ProtectedRoute
                         path="/"
                         loggedIn={loggedIn}
-                        component={PageContent}
+                        component={Main}
                         onEditProfile={handleEditProfileClick}
                         onAddPlace={handleAddPlaceClick}
                         onEditAvatar={handleEditAvatarClick}
@@ -278,13 +258,7 @@ function App() {
                         cards={cards}
                         onCardLike={handleCardLike}
                         onConfirm={handleConfirmationClick}
-                        headerComponent={Header}
-                        mainComponent={Main}
-                        footerComponent={Footer}
                         userData={userData}
-                        linkUrl="signin"
-                        linkName="Выйти"
-                        classLink="header__link_type_logout"
                         onSignOut={onSignOut}
                         // onShowMenu={handleMenuClick}
                         // isMenuOpen={isMenuOpen}
