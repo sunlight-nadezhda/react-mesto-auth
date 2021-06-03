@@ -1,41 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
 import logo from "./../images/logo-white.svg";
 import UserStatus from "./UserStatus";
+import BurgerButton from "./BurgerButton";
 
 function Header(props) {
-    // const classNameButtonMenu = `button header__button-menu ${props.isMenuOpen ? '' : 'header__button-menu_opened'}`;
-    // const classNameButtonClose = `button header__button-close ${props.isMenuOpen ? 'header__button-close_opened' : ''}`;
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    const onMenuClick = () => {
+        setIsMenuOpen(!isMenuOpen);
+    };
+
     return (
-        <header className={`header ${props.isMenuOpen ? 'header_opened' : ''}`}>
-            <a href="index.html" target="_self" className="logo">
-                <img
-                    src={logo}
-                    alt="Логотип проекта Место"
-                    className="header__logo"
-                />
-            </a>
+        <header className={`header ${isMenuOpen ? "header_menu-opened" : ""}`}>
+            <div className={`header__head ${isMenuOpen ? "header__head_menu-opened" : ""}`}>
+                <a href="index.html" target="_self" className="logo">
+                    <img
+                        src={logo}
+                        alt="Логотип проекта Место"
+                        className="header__logo"
+                    />
+                </a>
+                <BurgerButton isOpen={isMenuOpen} onClick={onMenuClick} />
+            </div>
             <UserStatus
                 userData={props.userData}
                 linkUrl={props.linkUrl}
                 linkName={props.linkName}
                 classLink={props.classLink}
                 onSignOut={props.onSignOut}
-                isMenuOpen={props.isMenuOpen}
+                isMenuOpen={isMenuOpen}
             />
-            <button
-                type="button"
-                aria-label="Меню открыть"
-                // className={classNameButtonMenu}
-                className="button header__button-menu"
-                onClick={props.onShowMenu}
-            ></button>
-            <button
-                type="button"
-                aria-label="Закрыть"
-                // className={classNameButtonClose}
-                className="button header__button-close"
-                onClick={props.onClose}
-            ></button>
         </header>
     );
 }

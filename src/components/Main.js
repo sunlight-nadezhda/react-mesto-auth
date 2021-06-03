@@ -9,7 +9,16 @@ function Main(props) {
 
     return (
         <div className="page__content">
-            <Header linkUrl="signin" linkName="Выйти" classLink="header__link_type_logout" />
+            <Header
+                userData={props.userData}
+                linkUrl="signin"
+                linkName="Выйти"
+                classLink="header__link_type_logout"
+                onSignOut={props.onSignOut}
+                onShowMenu={props.onShowMenu}
+                isMenuOpen={props.isMenuOpen}
+                onClose={props.onClose}
+            />
             <main>
                 <section className="profile">
                     <div

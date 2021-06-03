@@ -31,7 +31,6 @@ function App() {
     const [statusData, setStatusData] = useState(null);
     const history = useHistory();
     const [loggedIn, setLoggedIn] = useState(false);
-    // const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     function handleEditAvatarClick() {
         setIsEditAvatarPopupOpen(true);
@@ -58,7 +57,6 @@ function App() {
         setSelectedCard({});
         setIsInfoTooltipOpen(false);
         setStatusData(null);
-        // setIsMenuOpen(false);
     }
 
     function handleCardClick(cardData) {
@@ -185,11 +183,6 @@ function App() {
         }
     }
 
-    // function handleMenuClick() {
-    //     setIsMenuOpen(true);
-    //     console.log(isMenuOpen);
-    // }
-
     useEffect(() => {
         api.getUserInfo()
             .then((userInfo) => {
@@ -260,9 +253,6 @@ function App() {
                         onConfirm={handleConfirmationClick}
                         userData={userData}
                         onSignOut={onSignOut}
-                        // onShowMenu={handleMenuClick}
-                        // isMenuOpen={isMenuOpen}
-                        // onClose={closeAllPopups}
                     />
                     <Route>
                         {!loggedIn ? (
