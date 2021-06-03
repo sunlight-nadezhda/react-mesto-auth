@@ -1,7 +1,6 @@
 .page__content {
     max-width: 880px;
     margin: 0 auto;
-    padding-top: 45px;
     padding-bottom: 60px;
 }
 
@@ -14,7 +13,6 @@
 @media (max-width: 760px) {
   .page__content {
     max-width: 100%;
-    padding-top: 28px;
     padding-bottom: 36px;
   }
 }
